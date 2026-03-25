@@ -1,0 +1,62 @@
+# Dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Frontend (Next.js)
+.next/
+out/
+build/
+*.tsbuildinfo
+
+# Backend (FastAPI)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+**/*.pyc
+**/__pycache__/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.backend
+.env.frontend
+
+# IDE and editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# AI Assistant
+.claude/
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*.bak
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Cache
+.cache/
+.pytest_cache/
+.mypy_cache/
+dist/
