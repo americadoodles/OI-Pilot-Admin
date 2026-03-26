@@ -56,10 +56,10 @@ async function apiFetch<T = unknown>(
   return res.json();
 }
 
-// ── Auth ────────────────────────────────────────────────────────────────
+// ── Auth (uses OA-landing: /api/pilot/auth/*) ──────────────────────────
 
 export async function login(email: string, password: string) {
-  const data = await apiFetch<{ access_token: string }>("/admin/auth/login", {
+  const data = await apiFetch<{ access_token: string }>("/pilot/auth/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
     requireAuth: false,
@@ -76,79 +76,77 @@ export async function getProfile() {
     contact_name: string;
     role: string;
     is_active: boolean;
-  }>("/admin/auth/me");
+  }>("/pilot/auth/me");
 }
 
 export function logout() {
   localStorage.removeItem("admin_token");
 }
 
-// ── Admin: Dealers ──────────────────────────────────────────────────────
+// ── Dealers (uses OA-landing: /api/pilot/admin/*) ───────────────────────
 
 export async function getDealers(params?: Record<string, string>) {
   const query = params ? `?${new URLSearchParams(params)}` : "";
-  return apiFetch<{ items: Dealer[]; total: number }>(`/admin/dealers${query}`);
+  return apiFetch<{ items: Dealer[]; total: number }>(`/pilot/admin/dealers${query}`);
 }
 
 export async function getDealerDetail(id: string) {
-  return apiFetch<DealerDetail>(`/admin/dealers/${id}`);
+  return apiFetch<DealerDetail>(`/pilot/admin/dealers/${id}`);
 }
 
 export async function approveDealer(id: string, action: "approve" | "decline", notes?: string) {
-  return apiFetch(`/admin/dealers/${id}/approve`, {
+  return apiFetch(`/pilot/dealers/approve/${id}`, {
     method: "PUT",
     body: JSON.stringify({ action, notes }),
   });
 }
 
-// ── Admin: Stats ────────────────────────────────────────────────────────
+// ── Stats (uses OA-landing: /api/pilot/admin/stats) ─────────────────────
 
 export async function getAdminStats() {
-  return apiFetch<AdminStats>("/admin/stats");
+  return apiFetch<AdminStats>("/pilot/admin/stats");
 }
 
-// ── Admin: Consignment ──────────────────────────────────────────────────
+// ── Consignment (uses OA-landing: /api/pilot/admin/consigned) ───────────
 
 export async function getConsignedVehicles(params?: Record<string, string>) {
   const query = params ? `?${new URLSearchParams(params)}` : "";
-  return apiFetch<{ items: ConsignedVehicle[]; total: number }>(`/admin/consignment${query}`);
+  return apiFetch<{ items: ConsignedVehicle[]; total: number }>(`/pilot/admin/consigned${query}`);
 }
 
-// ── Admin: Financing ────────────────────────────────────────────────────
+// ── Financing (uses OA-landing: /api/pilot/admin/financing) ─────────────
 
 export async function getFinancingApplications(params?: Record<string, string>) {
   const query = params ? `?${new URLSearchParams(params)}` : "";
-  return apiFetch<{ items: FinancingApp[]; total: number }>(`/admin/financing${query}`);
+  return apiFetch<{ items: FinancingApp[]; total: number }>(`/pilot/admin/financing${query}`);
 }
 
-// ── Compliance ──────────────────────────────────────────────────────────
+// ── Compliance (uses OA-landing: /api/pilot/compliance/*) ───────────────
 
 export async function getInsuranceAlerts() {
-  return apiFetch<InsuranceAlert[]>("/admin/compliance/insurance/alerts");
+  return apiFetch<InsuranceAlert[]>("/pilot/compliance/insurance/alerts");
 }
 
 export async function runComplianceChecks() {
-  return apiFetch("/admin/compliance/run-checks", { method: "POST" });
+  return apiFetch("/pilot/compliance/run-checks", { method: "POST" });
 }
 
 export async function getDealerReview(dealerId: string) {
-  // Uses dealer detail endpoint — compliance info included
-  return apiFetch<DealerDetail>(`/admin/dealers/${dealerId}`);
+  return apiFetch<ComplianceReview>(`/pilot/compliance/dealer-review/${dealerId}`);
 }
 
 export async function updateComplianceStatus(dealerId: string, newStatus: string) {
-  return apiFetch(`/admin/dealers/${dealerId}/compliance`, {
+  return apiFetch(`/pilot/compliance/dealer-review/${dealerId}/status?new_status=${newStatus}`, {
     method: "PUT",
-    body: JSON.stringify({ status: newStatus }),
   });
 }
 
 export async function getStateConfigs() {
-  return apiFetch<StateConfig[]>("/admin/compliance/states");
+  return apiFetch<StateConfig[]>("/pilot/compliance/states");
 }
 
 export async function upsertStateConfig(stateCode: string, data: Partial<StateConfig>) {
-  return apiFetch(`/admin/compliance/states/${stateCode}`, {
+  return apiFetch(`/pilot/compliance/states/${stateCode}`, {
     method: "PUT",
     body: JSON.stringify(data),
   });
